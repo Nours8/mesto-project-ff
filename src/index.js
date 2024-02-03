@@ -8,10 +8,12 @@ const cardTemplate = document.querySelector('#card-template').content;
 const placesList = document.querySelector('.places__list');
 const profileAddButton = document.querySelector('.profile__add-button');
 const profileEditButton = document.querySelector('.profile__edit-button');
+const popupImage = document.querySelector('.popup_type_image');
+const btnCloseImage = popupImage.querySelector('.popup__close');
 const popupEdit = document.querySelector('.popup_type_edit');
-const popupClose = popupEdit.querySelector('.popup__close');
+const btnCloseEdit = popupEdit.querySelector('.popup__close');
 const popupNewCard = document.querySelector('.popup_type_new-card');
-
+const btnCloseNewCard = popupNewCard.querySelector('.popup__close');
 const newPlaceFormElement = document.querySelector('.popup__form[name="new-place"]');
 const placeNameInput = newPlaceFormElement.elements['place-name'];
 const linkInput = newPlaceFormElement.elements.link;
@@ -23,20 +25,26 @@ const profileJobInput = profileFormElement.elements.description;
 const profileTitle = document.querySelector('.profile__title');
 const profileDescription = document.querySelector('.profile__description');
 
-profileNameInput.value = profileTitle.textContent;
-profileJobInput.value = profileDescription.textContent;
-
-
 initialCards.forEach(function (card) {
   placesList.append(createCard(card, deleteCard, likeCard, cardFullScreen));
 });
 
 profileEditButton.addEventListener('click', function () {
+  profileNameInput.value = profileTitle.textContent;
+  profileJobInput.value = profileDescription.textContent;
   openModal(popupEdit);
 });
 
-popupClose.addEventListener('click', function () {
+btnCloseImage.addEventListener('click', function () {
+  closeModal(popupImage);
+});
+
+btnCloseEdit.addEventListener('click', function () {
   closeModal(popupEdit);
+});
+
+btnCloseNewCard.addEventListener('click', function () {
+  closeModal(popupNewCard);
 });
 
 profileAddButton.addEventListener('click', function () {
@@ -48,7 +56,6 @@ newPlaceFormElement.addEventListener('submit', handleNewCardFormSubmit);
 profileFormElement.addEventListener('submit', handleFormSubmit);
 
 function cardFullScreen(link, name) {
-  const popupImage = document.querySelector('.popup_type_image');
   const img = popupImage.querySelector('.popup__image');
   img.src = link;
   img.alt = name;
@@ -67,7 +74,7 @@ function handleNewCardFormSubmit(evt) {
   placesList.append(newCard);
 
   newPlaceFormElement.reset();
-  closeModal(newPlaceFormElement.closest('.popup'));
+  closeModal(popupNewCard);
 }
 
 
@@ -81,5 +88,5 @@ function handleFormSubmit(evt) {
   profileTitle.textContent = nameValue;
   profileDescription.textContent = jobValue;
 
-  closeModal(document.querySelector('.popup_is-opened'));
+  closeModal(popupEdit);
 }

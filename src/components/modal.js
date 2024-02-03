@@ -2,22 +2,18 @@ export {
   openModal,
   closeEscape,
   closeOverlay,
-  closeModal,
-
+  closeModal
 };
 
 function openModal(popup) {
   popup.classList.add('popup_is-opened', 'popup_is-animated');
   document.addEventListener('click', closeOverlay);
   document.addEventListener('keydown', closeEscape);
-
-  const closeButton = popup.querySelector('.popup__close');
-  if (closeButton) closeButton.addEventListener('click', () => closeModal(popup));
 }
 
 
 function closeEscape(evt) {
-  if ((evt.key === 'Escape') && (document.querySelector('.popup_is-opened'))) {
+  if ((evt.key === 'Escape')) {
     closeModal(document.querySelector('.popup_is-opened'));
   }
 }
