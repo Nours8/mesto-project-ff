@@ -53,7 +53,7 @@ profileAddButton.addEventListener('click', function () {
 
 newPlaceFormElement.addEventListener('submit', handleNewCardFormSubmit);
 
-profileFormElement.addEventListener('submit', handleFormSubmit);
+profileFormElement.addEventListener('submit', profileEditingForm);
 
 function cardFullScreen(link, name) {
   const img = popupImage.querySelector('.popup__image');
@@ -79,7 +79,7 @@ function handleNewCardFormSubmit(evt) {
 
 
 // форма редактирования профиля
-function handleFormSubmit(evt) {
+function profileEditingForm(evt) {
   evt.preventDefault();
 
   const nameValue = profileNameInput.value;

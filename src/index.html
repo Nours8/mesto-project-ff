@@ -17,10 +17,10 @@
       <div class="profile__image"></div>
       <div class="profile__info">
         <h1 class="profile__title">Жак-Ив Кусто</h1>
-        <button class="profile__edit-button" type="button"></button>
+        <button class="profile__edit-button" type="button" aria-label="Редактирование профиля"></button>
         <p class="profile__description">Исследователь океана</p>
       </div>
-      <button class="profile__add-button" type="button"></button>
+      <button class="profile__add-button" type="button" aria-label="Добавить новое место"></button>
     </section>
     <section class="places page__section">
       <ul class="places__list">
@@ -34,7 +34,7 @@
   </footer>
   <div class="popup popup_type_edit">
     <div class="popup__content">
-      <button type="button" class="popup__close"></button>
+      <button type="button" class="popup__close" aria-label="Закрытие модального окна"></button>
       <h3 class="popup__title">Редактировать профиль</h3>
       <form class="popup__form" name="edit-profile">
         <input type="text" name="name" class="popup__input popup__input_type_name" placeholder="Имя" required>
@@ -45,7 +45,7 @@
   </div>
   <div class="popup popup_type_new-card">
     <div class="popup__content">
-      <button type="button" class="popup__close"></button>
+      <button type="button" class="popup__close" aria-label="Закрытие модального окна"></button>
       <h3 class="popup__title">Новое место</h3>
       <form class="popup__form" name="new-place">
         <input type="text" name="place-name" class="popup__input popup__input_type_card-name" placeholder="Название" required>
@@ -54,7 +54,7 @@
       </form>
     </div>
   </div>
-  <div class="popup popup_type_image">
+  <div class="popup popup_type_image" aria-label="Закрытие модального окна">
     <div class="popup__content popup__content_content_image">
       <button type="button" class="popup__close"></button>
       <img src="" alt="" class="popup__image">
@@ -69,7 +69,7 @@
     <div class="card__description">
       <h2 class="card__title">
       </h2>
-      <button type="button" class="card__like-button"></button>
+      <button type="button" class="card__like-button" aria-label="Лайк карточке"></button>
     </div>
   </li>
 </template>
