@@ -2,7 +2,7 @@ export {
   openModal,
   closeEscape,
   closeOverlay,
-  closeModal
+  closeModal,
 };
 
 function openModal(popup) {
@@ -29,7 +29,3 @@ function closeModal(popup) {
   document.removeEventListener('click', closeOverlay);
   document.removeEventListener('keydown', closeEscape);
 }
-
-
-
-
