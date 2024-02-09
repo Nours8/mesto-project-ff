@@ -1,5 +1,5 @@
 import './api.js';
-import '../pages/index.css';
+import './pages/index.css';
 import {createCard, deleteCard, likeCard } from './components/card.js';
 import {openModal, closeModal, } from './components/modal.js';
 import {clearValidation, enableValidation} from './components/validation.js'
@@ -78,34 +78,34 @@ function handleNewCardFormSubmit(evt) {
   const nameValue = placeNameInput.value;
   const linkValue = linkInput.value;
 
-  // const newCard = createCard(
-  //   { name: nameValue, link: linkValue },
-  //   deleteCard,
-  //   likeCard,
-  //   cardFullScreen,
-  //   userId
-  //   );
+  const newCard = createCard(
+    { name: nameValue, link: linkValue },
+    deleteCard,
+    likeCard,
+    cardFullScreen,
+    userId
+    );
 
-  // placesList.prepend(newCard);
+  placesList.prepend(newCard);
 
-  // addNewCard({
-  //   name: nameValue,
-  //   link: linkValue
-  // })
-
-  addNewCard(nameValue, linkValue)
-    .then((card) => {
-      const newCard = createCard(
-        card.name,
-        card.link,
-        deleteCard,
-        likeCard,
-        cardFullScreen,
-        userId
-        );
-    placesList.prepend(newCard);
-
+  addNewCard({
+    name: nameValue,
+    link: linkValue
   })
+
+  // addNewCard(nameValue, linkValue)
+  //   .then((card) => {
+  //     const newCard = createCard(
+  //       card.name,
+  //       card.link,
+  //       deleteCard,
+  //       likeCard,
+  //       cardFullScreen,
+  //       userId
+  //       );
+  //   placesList.prepend(newCard);
+
+  // })
 
   newPlaceFormElement.reset();
   closeModal(popupNewCard);
