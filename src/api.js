@@ -1,7 +1,13 @@
-import {profileTitle, profileDescription, placesList, cardFullScreen, likes} from './index.js';
-// import {createCard} from './components/card.js';
-import {createCard, deleteCard, likeCard} from './components/card.js';
-export {editedProfile, userInformation, addNewCard}
+export {
+  editedProfile,
+  userInformation,
+  addNewCard,
+  getCards,
+  deleteRequest,
+  addLike,
+  removeLike,
+  editAvatar
+}
 
 const configRequests = {
   baseUrl: 'https://nomoreparties.co/v1/wff-cohort-5',
@@ -34,38 +40,11 @@ const getCards = () => {
         return res.json()
       }
       return Promise.reject(`Ошибка: ${res.status}`);
-
     })
 }
 
-let userId;
-
-const promises = [userInformation(), getCards()];
-
-Promise.all(promises)
-  .then(([user, cardData]) => {
-    userId = user._id;
-    cardData.forEach(function (cardData) {
-      placesList.append(createCard(
-        cardData,
-        deleteCard,
-        likeCard,
-        cardFullScreen,
-        userId
-        ));
-    });
-    profileTitle.textContent = user.name;
-    profileDescription.textContent = user.about;
-    console.log(cardData);
-    console.log(user);
-
-  })
-  .catch((error) => {
-    console.log(error);
-  });
-
 function editedProfile(data) {
-  fetch(`${configRequests.baseUrl}/users/me`, {
+  return fetch(`${configRequests.baseUrl}/users/me`, {
     method: 'PATCH',
     headers: configRequests.headers,
     body: JSON.stringify({
@@ -76,7 +55,7 @@ function editedProfile(data) {
 }
 
 function addNewCard(data) {
-  fetch(`${configRequests.baseUrl}/cards`, {
+  return fetch(`${configRequests.baseUrl}/cards`, {
     method: 'POST',
     headers: configRequests.headers,
     body: JSON.stringify({
@@ -86,23 +65,57 @@ function addNewCard(data) {
   });
 }
 
+function deleteRequest(cardId) {
+  return fetch(`${configRequests.baseUrl}/cards/${cardId}`, {
+    method: 'DELETE',
+    headers: configRequests.headers,
+    })
+  .then((res) => {
+    if (res.ok) {
+      return res.json()
+    }
+    return Promise.reject(`Ошибка: ${res.status}`);
+  })
+}
 
-// const likes = () => {
-  // fetch(`${configRequests.baseUrl}/cards`, {
-  //   method: 'GET',
-  //   headers: configRequests.headers,
-  //   })
-  // .then((res) => {
-  //   if (res.ok) {
-  //     return res.json()
-  //   }
-  // })
-  // .then((data) => {
-  //   likes.textContent = data.map(card => card.likes.length);
-  // })
-  // .catch((err) => {
-  //   console.log(err);
-  // });
-// }
+function addLike(cardId) {
+  return fetch(`${configRequests.baseUrl}/cards/likes/${cardId}`, {
+    method: 'PUT',
+    headers: configRequests.headers,
+    })
+  .then((res) => {
+    if (res.ok) {
+      return res.json()
+    }
+    return Promise.reject(`Ошибка: ${res.status}`);
+  })
+}
 
+function removeLike(cardId) {
+  return fetch(`${configRequests.baseUrl}/cards/likes/${cardId}`, {
+    method: 'DELETE',
+    headers: configRequests.headers,
+    })
+  .then((res) => {
+    if (res.ok) {
+      return res.json()
+    }
+    return Promise.reject(`Ошибка: ${res.status}`);
+  })
+}
 
+function editAvatar(link) {
+  return fetch(`${configRequests.baseUrl}/users/me/avatar`, {
+    method: 'PATCH',
+    headers: configRequests.headers,
+    body: JSON.stringify({
+      avatar: link
+    })
+  })
+  .then((res) => {
+    if (res.ok) {
+      return res.json()
+    }
+    return Promise.reject(`Ошибка: ${res.status}`);
+  })
+}

@@ -1,7 +1,8 @@
 export {createCard, deleteCard, likeCard };
 import {cardTemplate} from '../index.js';
+import {deleteRequest, addLike, removeLike} from '../api.js';
 
-function createCard(cardData, remove, likeCard, cardFullScreen, userId) {
+function createCard(cardData, deleteCard, likeCard, cardFullScreen, userInfo) {
   const cardElement = cardTemplate.querySelector('.card').cloneNode(true);
   const buttonCardDelete = cardElement.querySelector('.card__delete-button');
   const likeButton = cardElement.querySelector('.card__like-button');
@@ -12,27 +13,61 @@ function createCard(cardData, remove, likeCard, cardFullScreen, userId) {
   cardElement.querySelector('.card__image').alt = cardData.name;
   cardElement.querySelector('.card__image').src = cardData.link;
 
-  buttonCardDelete.addEventListener('click', remove);
-  likeButton.addEventListener('click', likeCard);
   cardImage.addEventListener('click', () => cardFullScreen(cardData.link, cardData.name));
-  likes.textContent = Object.keys(cardData.likes).length;
-  // likes.textContent = cardData.likes.length;
 
-  if (cardData.owner._id !== userId) {
+  if (cardData.owner._id !== userInfo._id) {
     buttonCardDelete.style.display = 'none';
+  } else {
+    buttonCardDelete.addEventListener('click', () => {
+      deleteCard(cardData._id, cardElement);
+    })
   }
+
+  likes.textContent = Object.keys(cardData.likes).length;
+
+  likeButton.addEventListener('click', () => {
+    likeCard(cardData._id, likes, likeButton)
+  });
+
+  cardData.likes.forEach((item) => {
+    if (item._id === userInfo._id) {
+      likeButton.classList.add('card__like-button_is-active');
+    } else {
+      likeButton.classList.remove('card__like-button_is-active');
+    }
+  })
 
   return cardElement;
 }
 
-function deleteCard(evt) {
-  const removeCard = evt.target.closest('.card');
-  removeCard.remove();
+function deleteCard(cardId, card) {
+  deleteRequest(cardId)
+  .then(() => {
+    card.remove()
+  })
+  .catch((err) => {
+    console.log(err)
+  })
 }
 
-function likeCard(evt) {
-  evt.target.classList.toggle('card__like-button_is-active');
+function likeCard(id, likes, likeButton) {
+  if (!(likeButton.classList.contains('card__like-button_is-active'))) {
+    addLike(id)
+      .then((cardData) => {
+        likeButton.classList.add('card__like-button_is-active');
+        likes.textContent = Object.keys(cardData.likes).length;
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  } else {
+    removeLike(id)
+      .then((cardData) => {
+        likeButton.classList.remove('card__like-button_is-active');
+        likes.textContent = Object.keys(cardData.likes).length;
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }
 }
-
-
-

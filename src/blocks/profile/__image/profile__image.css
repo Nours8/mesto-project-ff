@@ -10,6 +10,28 @@
   background-image: url(../../../images/avatar.jpg);
 }
 
+.profile__edit-button__image {
+  border: none;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background-size: auto;
+  background-position: center;
+  margin: 0 29px 0 0;
+  background-image: url(../../../images/pen.svg);
+  background-repeat: no-repeat;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  background-color: rgb(0, 0, 0, 0);
+  position: absolute;
+}
+
+.profile__edit-button__image:hover {
+  opacity: 1;
+  background-color: rgba(0, 0, 0, .7)
+
+}
+
 @media screen and (max-width: 740px) {
   .profile__image {
     margin: 0 10px 0 0;
