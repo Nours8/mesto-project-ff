@@ -58,6 +58,8 @@ const placeNameInput = newPlaceFormElement.elements['place-name'];
 // инпут формы - ссылка
 const linkInput = newPlaceFormElement.elements.link;
 
+let userInfo;
+
 const validationConfig = {
   formSelector: '.popup__form',
   inputSelector: '.popup__input',
@@ -67,10 +69,136 @@ const validationConfig = {
   errorClass: 'popup__error_visible'
 };
 
+const promises = [userInformation(), getCards()];
+
+Promise.all(promises)
+  .then(([user, cardData]) => {
+    userInfo = user
+    cardData.forEach(function (cardData) {
+      placesList.append(createCard(
+        cardData,
+        deleteCard,
+        likeCard,
+        cardFullScreen,
+        userInfo
+        ));
+    });
+    profileTitle.textContent = user.name;
+    profileDescription.textContent = user.about;
+    console.log(cardData);
+    console.log(user);
+    document.querySelector('.profile__image').style.backgroundImage = `url(${user.avatar})`;
+
+  })
+  .catch((error) => {
+    console.log(error);
+  });
+
 enableValidation(validationConfig);
 
-// объект ключей user
-let userInfo;
+function cardFullScreen(link, name) {
+  const img = popupImage.querySelector('.popup__image');
+  const imgCaption = popupImage.querySelector('.popup__caption');
+  // img.alt = imgCaption.textContent;
+  imgCaption.textContent = name;
+  img.src = link;
+  img.alt = name;
+  openModal(popupImage);
+}
+
+function avatarUpdateForm(evt) {
+  evt.preventDefault();
+
+  const linkAvatarValue = linkAvatarInput.value;
+  popupEditImgElement.querySelector('.popup__button').textContent = 'Сохранение...';
+  editAvatar(linkAvatarValue)
+  .then((res) => {
+    document.querySelector('.profile__image').style.backgroundImage = `url(${res.avatar})`;
+    closeModal(popupEditImg);
+    popupEditImgElement.reset()
+  })
+
+  .catch((err) => {
+    console.log(`Ошибка: ${err}`)
+  })
+
+  .finally(() => {
+    popupEditImgElement.querySelector('.popup__button').textContent = 'Сохранить';
+  })
+}
+
+// форма создания карточки
+function handleNewCardFormSubmit(evt) {
+  evt.preventDefault();
+
+  const nameValue = placeNameInput.value;
+  const linkValue = linkInput.value;
+  newPlaceFormElement.querySelector('.popup__button').textContent = 'Сохранение...';
+
+  addNewCard({
+    name: nameValue,
+    link: linkValue
+  })
+  .then((res) => {
+    if (res.ok) {
+      return res.json()
+    }
+    return Promise.reject(res.status)
+  })
+  .then((res) => {
+    console.log(res);
+    placesList.prepend(createCard(
+      res,
+      deleteCard,
+      likeCard,
+      cardFullScreen,
+      userInfo
+      ))
+    newPlaceFormElement.reset()
+    closeModal(popupNewCard);
+  })
+  .catch((err) => {
+    console.log(`Ошибка: ${err}`)
+  })
+  .finally(() => {
+    newPlaceFormElement.querySelector('.popup__button').textContent = 'Сохранить';
+  })
+}
+
+// форма редактирования профиля
+function profileEditingForm(evt) {
+  evt.preventDefault();
+
+  const nameValue = profileNameInput.value;
+  const jobValue = profileJobInput.value;
+
+  profileTitle.textContent = nameValue;
+  profileDescription.textContent = jobValue;
+  popupEdit.querySelector('.popup__button').textContent = 'Сохранение...';
+  editedProfile({
+    name: profileNameInput.value,
+    about: profileJobInput.value
+  })
+  .then((res) => {
+    if (res.ok) {
+      return res.json()
+    }
+    return Promise.reject(res.status)
+  })
+  .then((res) => {
+    console.log(res)
+    profileTitle.textContent = res.name;
+    profileDescription.textContent = res.about;
+    profileFormElement.reset()
+    closeModal(popupEdit);
+  })
+  .catch((err) => {
+    console.log(`Ошибка: ${err}`)
+  })
+  .finally(() => {
+    popupEdit.querySelector('.popup__button').textContent = 'Сохранить';
+  })
+}
 
 //слушатель кнопки добавить место
 profileAddButtonNewPlace.addEventListener('click', function () {
@@ -121,117 +249,3 @@ newPlaceFormElement.addEventListener('submit', handleNewCardFormSubmit);
 // слушатель формы редактор профиля
 profileFormElement.addEventListener('submit', profileEditingForm);
 
-function cardFullScreen(link, name) {
-  const img = popupImage.querySelector('.popup__image');
-  img.src = link;
-  img.alt = name;
-  openModal(popupImage);
-}
-
-function avatarUpdateForm(evt) {
-  evt.preventDefault();
-
-  const linkAvatarValue = linkAvatarInput.value;
-
-  editAvatar(linkAvatarValue)
-  .then((res) => {
-    document.querySelector('.profile__image').style.backgroundImage = `url(${res.avatar})`;
-  })
-
-  closeModal(popupEditImg);
-  popupEditImgElement.reset()
-}
-
-// форма создания карточки
-function handleNewCardFormSubmit(evt) {
-  evt.preventDefault();
-
-  const nameValue = placeNameInput.value;
-  const linkValue = linkInput.value;
-
-  addNewCard({
-    name: nameValue,
-    link: linkValue
-  })
-  .then((res) => {
-    if (res.ok) {
-      return res.json()
-    }
-    return Promise.reject(res.status)
-  })
-  .then((res) => {
-    console.log(res);
-    newPlaceFormElement.querySelector('.popup__button').textContent = 'Сохранение...';
-    placesList.prepend(createCard(
-      res,
-      deleteCard,
-      likeCard,
-      cardFullScreen,
-      userInfo
-      ))
-  })
-  .catch((err) => {
-    console.log(`Ошибка: ${err}`)
-  })
-
-  newPlaceFormElement.reset()
-  closeModal(popupNewCard);
-}
-
-// форма редактирования профиля
-function profileEditingForm(evt) {
-  evt.preventDefault();
-
-  const nameValue = profileNameInput.value;
-  const jobValue = profileJobInput.value;
-
-  profileTitle.textContent = nameValue;
-  profileDescription.textContent = jobValue;
-
-  editedProfile({
-    name: profileNameInput.value,
-    about: profileJobInput.value
-  })
-  .then((res) => {
-    if (res.ok) {
-      return res.json()
-    }
-    return Promise.reject(res.status)
-  })
-  .then((res) => {
-    console.log(res)
-    popupEdit.querySelector('.popup__button').textContent = 'Сохранение...';
-  })
-  .catch((err) => {
-    console.log(`Ошибка: ${err}`)
-  })
-  newPlaceFormElement.reset()
-  closeModal(popupEdit);
-}
-
-const promises = [userInformation(), getCards()];
-
-Promise.all(promises)
-  .then(([user, cardData]) => {
-    userInfo = user
-    cardData.forEach(function (cardData) {
-      placesList.append(createCard(
-        cardData,
-        deleteCard,
-        likeCard,
-        cardFullScreen,
-        userInfo
-        ));
-    });
-    profileTitle.textContent = user.name;
-    profileDescription.textContent = user.about;
-    console.log(cardData);
-    console.log(user);
-    document.querySelector('.profile__image').style.backgroundImage = `url(${user.avatar})`;
-
-  })
-  .catch((error) => {
-    console.log(error);
-  });
-
-  // enableValidation(validationConfig);
