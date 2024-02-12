@@ -1,10 +1,9 @@
-import './api.js';
 import './pages/index.css';
 import {createCard, deleteCard, likeCard } from './components/card.js';
 import {openModal, closeModal, } from './components/modal.js';
 import {clearValidation, enableValidation} from './components/validation.js'
-import {editedProfile, userInformation, addNewCard, getCards, editAvatar} from './api.js';
-export {cardFullScreen, cardTemplate}
+import {editedProfile, getUserInformation, addNewCard, getCards, editAvatar} from './components/api.js';
+export {cardFullScreen, cardTemplate, checkResponse}
 
 const cardTemplate = document.querySelector('#card-template').content;
 const placesList = document.querySelector('.places__list');
@@ -58,7 +57,23 @@ const placeNameInput = newPlaceFormElement.elements['place-name'];
 // инпут формы - ссылка
 const linkInput = newPlaceFormElement.elements.link;
 
-let userInfo;
+//  cardFullScreen
+const img = popupImage.querySelector('.popup__image');
+const imgCaption = popupImage.querySelector('.popup__caption');
+
+// avatarUpdateForm
+const profile = document.querySelector('.profile')
+const imgAvatar = profile.querySelector('.profile__image')
+
+// проверка запроса
+const checkResponse = (res) => {
+  if (res.ok) {
+    return res.json();
+  }
+  return Promise.reject(`Ошибка: ${res.status}`);
+};
+
+let userId;
 
 const validationConfig = {
   formSelector: '.popup__form',
@@ -69,25 +84,25 @@ const validationConfig = {
   errorClass: 'popup__error_visible'
 };
 
-const promises = [userInformation(), getCards()];
+const promises = [getUserInformation(), getCards()];
 
 Promise.all(promises)
   .then(([user, cardData]) => {
-    userInfo = user
+    userId = user._id
     cardData.forEach(function (cardData) {
       placesList.append(createCard(
         cardData,
         deleteCard,
         likeCard,
         cardFullScreen,
-        userInfo
+        userId
         ));
     });
     profileTitle.textContent = user.name;
     profileDescription.textContent = user.about;
     console.log(cardData);
     console.log(user);
-    document.querySelector('.profile__image').style.backgroundImage = `url(${user.avatar})`;
+    imgAvatar.style.backgroundImage = `url(${user.avatar})`;
 
   })
   .catch((error) => {
@@ -97,9 +112,6 @@ Promise.all(promises)
 enableValidation(validationConfig);
 
 function cardFullScreen(link, name) {
-  const img = popupImage.querySelector('.popup__image');
-  const imgCaption = popupImage.querySelector('.popup__caption');
-  // img.alt = imgCaption.textContent;
   imgCaption.textContent = name;
   img.src = link;
   img.alt = name;
@@ -113,15 +125,13 @@ function avatarUpdateForm(evt) {
   popupEditImgElement.querySelector('.popup__button').textContent = 'Сохранение...';
   editAvatar(linkAvatarValue)
   .then((res) => {
-    document.querySelector('.profile__image').style.backgroundImage = `url(${res.avatar})`;
+    imgAvatar.style.backgroundImage = `url(${res.avatar})`;
     closeModal(popupEditImg);
     popupEditImgElement.reset()
   })
-
   .catch((err) => {
     console.log(`Ошибка: ${err}`)
   })
-
   .finally(() => {
     popupEditImgElement.querySelector('.popup__button').textContent = 'Сохранить';
   })
@@ -140,19 +150,13 @@ function handleNewCardFormSubmit(evt) {
     link: linkValue
   })
   .then((res) => {
-    if (res.ok) {
-      return res.json()
-    }
-    return Promise.reject(res.status)
-  })
-  .then((res) => {
     console.log(res);
     placesList.prepend(createCard(
       res,
       deleteCard,
       likeCard,
       cardFullScreen,
-      userInfo
+      userId
       ))
     newPlaceFormElement.reset()
     closeModal(popupNewCard);
@@ -178,12 +182,6 @@ function profileEditingForm(evt) {
   editedProfile({
     name: profileNameInput.value,
     about: profileJobInput.value
-  })
-  .then((res) => {
-    if (res.ok) {
-      return res.json()
-    }
-    return Promise.reject(res.status)
   })
   .then((res) => {
     console.log(res)
