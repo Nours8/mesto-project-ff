@@ -11,7 +11,7 @@ function createCard(cardData, deleteCard, likeCard, cardFullScreen, userId) {
 
   cardElement.querySelector('.card__title').textContent = cardData.name;
   cardImage.alt = cardData.name;
-  cardElement.querySelector('.card__image').src = cardData.link;
+  cardImage.src = cardData.link;
 
   cardImage.addEventListener('click', () => cardFullScreen(cardData.link, cardData.name));
 

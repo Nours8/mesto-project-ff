@@ -100,8 +100,6 @@ Promise.all(promises)
     });
     profileTitle.textContent = user.name;
     profileDescription.textContent = user.about;
-    console.log(cardData);
-    console.log(user);
     imgAvatar.style.backgroundImage = `url(${user.avatar})`;
 
   })
@@ -176,17 +174,20 @@ function profileEditingForm(evt) {
   const nameValue = profileNameInput.value;
   const jobValue = profileJobInput.value;
 
-  profileTitle.textContent = nameValue;
-  profileDescription.textContent = jobValue;
   popupEdit.querySelector('.popup__button').textContent = 'Сохранение...';
   editedProfile({
     name: profileNameInput.value,
     about: profileJobInput.value
   })
   .then((res) => {
-    console.log(res)
+    // console.log(res)
+
+    profileTitle.textContent = nameValue;
+    profileDescription.textContent = jobValue;
+
     profileTitle.textContent = res.name;
     profileDescription.textContent = res.about;
+
     profileFormElement.reset()
     closeModal(popupEdit);
   })
