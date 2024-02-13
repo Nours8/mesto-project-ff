@@ -171,8 +171,8 @@ function handleNewCardFormSubmit(evt) {
 function profileEditingForm(evt) {
   evt.preventDefault();
 
-  const nameValue = profileNameInput.value;
-  const jobValue = profileJobInput.value;
+  // const nameValue = profileNameInput.value;
+  // const jobValue = profileJobInput.value;
 
   popupEdit.querySelector('.popup__button').textContent = 'Сохранение...';
   editedProfile({
@@ -180,10 +180,8 @@ function profileEditingForm(evt) {
     about: profileJobInput.value
   })
   .then((res) => {
-    // console.log(res)
-
-    profileTitle.textContent = nameValue;
-    profileDescription.textContent = jobValue;
+    // profileTitle.textContent = nameValue;
+    // profileDescription.textContent = jobValue;
 
     profileTitle.textContent = res.name;
     profileDescription.textContent = res.about;
