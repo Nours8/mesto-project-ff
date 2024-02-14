@@ -9,7 +9,13 @@ export {
   editAvatar
 }
 
-import {checkResponse} from '../index.js'
+// проверка запроса
+const checkResponse = (res) => {
+  if (res.ok) {
+    return res.json();
+  }
+  return Promise.reject(`Ошибка: ${res.status}`);
+};
 
 const configRequests = {
   baseUrl: 'https://nomoreparties.co/v1/wff-cohort-5',

@@ -3,7 +3,7 @@ import {createCard, deleteCard, likeCard } from './components/card.js';
 import {openModal, closeModal, } from './components/modal.js';
 import {clearValidation, enableValidation} from './components/validation.js'
 import {editedProfile, getUserInformation, addNewCard, getCards, editAvatar} from './components/api.js';
-export {cardFullScreen, cardTemplate, checkResponse}
+export {cardFullScreen, cardTemplate}
 
 const cardTemplate = document.querySelector('#card-template').content;
 const placesList = document.querySelector('.places__list');
@@ -64,14 +64,6 @@ const imgCaption = popupImage.querySelector('.popup__caption');
 // avatarUpdateForm
 const profile = document.querySelector('.profile')
 const imgAvatar = profile.querySelector('.profile__image')
-
-// проверка запроса
-const checkResponse = (res) => {
-  if (res.ok) {
-    return res.json();
-  }
-  return Promise.reject(`Ошибка: ${res.status}`);
-};
 
 let userId;
 
@@ -171,18 +163,12 @@ function handleNewCardFormSubmit(evt) {
 function profileEditingForm(evt) {
   evt.preventDefault();
 
-  // const nameValue = profileNameInput.value;
-  // const jobValue = profileJobInput.value;
-
   popupEdit.querySelector('.popup__button').textContent = 'Сохранение...';
   editedProfile({
     name: profileNameInput.value,
     about: profileJobInput.value
   })
   .then((res) => {
-    // profileTitle.textContent = nameValue;
-    // profileDescription.textContent = jobValue;
-
     profileTitle.textContent = res.name;
     profileDescription.textContent = res.about;
 
